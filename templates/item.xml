@@ -1,0 +1,6 @@
+<item>
+	<title>%name%</title>
+	<link>https://davidovski.xyz/%url%</link>
+	<pubDate>%date%</pubDate>
+	<description><![CDATA[%content%]]></description>
+</item>

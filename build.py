@@ -39,8 +39,12 @@ def formatEntry(content, page):
 
 def make():
 
-    shutil.rmtree(dist)
-    os.makedirs(os.path.join(dist, "entries"))
+    try:
+        os.makedirs(os.path.join(dist, "entries"))
+    except:
+        print("Already have content")
+    shutil.rmtree(os.path.join(dist, "src"))
+    shutil.rmtree(os.path.join(dist, "images"))
     shutil.copytree(source, os.path.join(dist, "src"))
     shutil.copytree(images, os.path.join(dist, "images"))
     
@@ -53,7 +57,7 @@ def make():
                 formatEntry(summary_templ, page)
                     .replace(
                             "%content%", 
-                            "\n".join(page["html"].split("\n")[:10])
+                            "\n".join(page["html"].split("\n")[:summary_max])
                         ) 
                 
                 for page in pages
@@ -82,6 +86,21 @@ def make():
                 )
 
 
+    item_templ = getTemplateHTML("item.xml")
+    rss_templ = getTemplateHTML("rss.xml")
+    itemsXML = "\n".join(
+                [
+                    formatEntry(item_templ, page).replace("%content%", page["html"])
+                    for page in pages
+                    ]
+            )
+
+    with open(os.path.join(dist, "rss.xml"), "w") as index:
+        index.write(
+                    rss_templ.replace("%items%", itemsXML)
+                )
+
+    print(f"built in {len(pages)} pages")
 make()
 
         
